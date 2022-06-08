@@ -186,7 +186,7 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
               >
                 -価格は1時間当たりです-
               </Typography>
-              <Table sx={{ width: "auto", margin: "auto" }} component={Paper}>
+              <Table sx={{ width: "auto", margin: "auto" }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>リージョン</TableCell>
