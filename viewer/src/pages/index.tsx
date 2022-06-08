@@ -214,12 +214,6 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
   );
 };
 
-const fetcher = async (url: string): Promise<Instance[]> => {
-  const res = await fetch(url);
-  const data: Instance[] = await res.json();
-  return data;
-};
-
 type Props = {
   instances: Instance[];
   rating_updated_at: string;
