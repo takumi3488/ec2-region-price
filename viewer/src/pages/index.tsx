@@ -64,6 +64,13 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
     });
     setFilteredInstances(newInstances);
   }, [selectedFamily, search]);
+
+  const [hoursPerDay, setHoursPerDay] = useState<number>(24);
+  const handleHoursPerDay = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setHoursPerDay(+e.target.value);
+  };
   return (
     <>
       <Head>
@@ -177,31 +184,38 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
                   </TableRow>
                 </TableBody>
               </Table>
-              <Typography
-                sx={{
-                  marginTop: "2rem",
-                  fontSize: "0.8rem",
-                  textAlign: "center",
-                }}
-              >
-                -価格は1時間当たりです-
-              </Typography>
+              <Box sx={{ textAlign: "center", margin: "1rem" }}>
+                一日当たり
+                <TextField
+                  variant="standard"
+                  sx={{ width: "1.2rem", marginTop: "-4px" }}
+                  onChange={handleHoursPerDay}
+                  value={hoursPerDay}
+                />
+                時間使用(円/月に反映)
+              </Box>
               <Table sx={{ width: "auto", margin: "auto" }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>リージョン</TableCell>
-                    <TableCell>価格(円)</TableCell>
-                    <TableCell>価格(USD)</TableCell>
+                    <TableCell>価格(USD/時)</TableCell>
+                    <TableCell>価格(円/時)</TableCell>
+                    <TableCell>価格(円/月=30.5日)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {selected.locations.map((location) => (
                     <TableRow key={location.name}>
                       <TableCell>{location.name}</TableCell>
+                      <TableCell>{location.price}</TableCell>
                       <TableCell>
                         {Math.round(location.price * rate * 100) / 100}
                       </TableCell>
-                      <TableCell>{location.price}</TableCell>
+                      <TableCell>
+                        {Math.round(
+                          location.price * rate * 100 * 30.5 * hoursPerDay
+                        ) / 100}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -223,7 +237,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const ratings = await (
     await fetch("https://dotnsf-fx.herokuapp.com/")
   ).json();
-  const instances = await(
+  const instances = await (
     await fetch(`${process.env.APP_URL}/instance.json`)
   ).json();
   return {
