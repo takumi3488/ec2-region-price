@@ -18,7 +18,7 @@ const Header: FC<Props> = ({ rating_updated_at, rate }) => {
       <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
         <Select value={pathname} label={title}>
           {Object.keys(urls).map((url) => (
-            <MenuItem value={url} onClick={() => router.replace(url)}>
+            <MenuItem value={url} onClick={() => router.replace(url)} key={url}>
               <Typography sx={{ display: "inline-block", width: "100%" }}>
                 {urls[url]}
               </Typography>

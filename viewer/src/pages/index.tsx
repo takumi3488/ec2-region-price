@@ -62,7 +62,7 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
       );
     });
     setFilteredInstances(newInstances);
-  }, [selectedFamily, search]);
+  }, [instances, selectedFamily, search]);
 
   const [hoursPerDay, setHoursPerDay] = useState<number>(24);
   const handleHoursPerDay = (
