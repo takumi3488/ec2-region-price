@@ -15,14 +15,13 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
 import { ChangeEvent, useEffect, useState } from "react";
+import Layout from "./components/Layout";
 
 type Instance = {
   name: string;
   memory: number;
   vcpu: number;
-  os: string;
   family: string;
   locations: Location[];
 };
@@ -72,159 +71,132 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
     setHoursPerDay(+e.target.value);
   };
   return (
-    <>
-      <Head>
-        <title>EC2 Region Price</title>
-      </Head>
-      <Box
-        sx={{
-          width: "clamp(1080px, calc(100vw - 3rem), 1920px)",
-          padding: "1rem",
-          margin: "auto",
-          display: "grid",
-          gridTemplate: `"header header" auto
-                       "aside  main  " auto
-                      / 2fr    3fr   `,
-          gridGap: "1rem",
-        }}
-      >
-        <Box component="header" sx={{ gridArea: "header" }}>
-          <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
-            EC2の料金をリージョン毎に並べて見たい
-          </Typography>
-          <Typography sx={{ textAlign: "center" }}>
-            {rate}円/USD (最終更新日: {rating_updated_at})
-          </Typography>
+    <Layout rate={rate} rating_updated_at={rating_updated_at}>
+      <Box component="aside" sx={{ gridArea: "aside" }}>
+        <Box component="span" sx={{display: "flex"}}>
+        <TextField
+          variant="standard"
+          sx={{ marginBottom: "1.5rem" }}
+          onChange={handleSearch}
+        />
+        <Typography>から始まる</Typography>
         </Box>
-        <Box component="aside" sx={{ gridArea: "aside" }}>
-          <TextField
-            variant="standard"
-            placeholder="インスタンス名で絞り込み"
-            sx={{ marginBottom: "1.5rem" }}
-            fullWidth
-            onChange={handleSearch}
-          />
-          <FormControl>
-            <FormLabel>インスタンスタイプ</FormLabel>
-            <RadioGroup row value={selectedFamily} onChange={selectFamily}>
-              {[
-                "すべて",
-                "汎用",
-                "コンピューティング最適化",
-                "メモリ最適化",
-                "高速コンピューティング",
-                "ストレージ最適化",
-              ].map((family) => (
-                <FormControlLabel
-                  value={family}
-                  control={<Radio />}
-                  label={family}
-                  key={family}
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-          <Table sx={{ "& th,td": { padding: "0.3rem" } }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>インスタンス名</TableCell>
-                <TableCell>vCPU(GB)</TableCell>
-                <TableCell>メモリ(GB)</TableCell>
-                <TableCell>タイプ</TableCell>
-                <TableCell>OS</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredInstances.map((instance) => (
-                <TableRow
-                  sx={{
-                    "&:hover": { cursor: "pointer", background: "#f0f0f0" },
-                  }}
-                  onClick={() => selectInstance(instance.name)}
-                  key={instance.name}
-                >
-                  <TableCell>{instance.name}</TableCell>
-                  <TableCell>{instance.vcpu}</TableCell>
-                  <TableCell>{instance.memory}</TableCell>
-                  <TableCell sx={{ fontSize: "0.7rem" }}>
-                    {instance.family}
-                  </TableCell>
-                  <TableCell>{instance.os}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-        <Box component="main" sx={{ gridArea: "main" }}>
-          {selected && (
-            <Paper sx={{ padding: "1rem" }} elevation={3}>
-              <Typography
-                component="h2"
-                variant="h5"
-                fontWeight="bold"
-                sx={{ textAlign: "center" }}
+        <FormControl>
+          <FormLabel>インスタンスタイプ</FormLabel>
+          <RadioGroup row value={selectedFamily} onChange={selectFamily}>
+            {[
+              "すべて",
+              "汎用",
+              "コンピューティング最適化",
+              "メモリ最適化",
+              "高速コンピューティング",
+              "ストレージ最適化",
+            ].map((family) => (
+              <FormControlLabel
+                value={family}
+                control={<Radio />}
+                label={family}
+                key={family}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+        <Table sx={{ "& th,td": { padding: "0.3rem" } }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>インスタンス名</TableCell>
+              <TableCell>vCPU(GB)</TableCell>
+              <TableCell>メモリ(GB)</TableCell>
+              <TableCell>タイプ</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredInstances.map((instance) => (
+              <TableRow
+                sx={{
+                  "&:hover": { cursor: "pointer", background: "#f0f0f0" },
+                }}
+                onClick={() => selectInstance(instance.name)}
+                key={instance.name}
               >
-                {selected.name}
-              </Typography>
-              <Table sx={{ width: "auto", margin: "auto" }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>vCPU(GB)</TableCell>
-                    <TableCell>メモリ(GB)</TableCell>
-                    <TableCell>タイプ</TableCell>
-                    <TableCell>OS</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>{selected.vcpu}</TableCell>
-                    <TableCell>{selected.memory}</TableCell>
-                    <TableCell>{selected.family}</TableCell>
-                    <TableCell>{selected.os}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              <Box sx={{ textAlign: "center", margin: "1rem" }}>
-                一日当たり
-                <TextField
-                  variant="standard"
-                  sx={{ width: "1.2rem", marginTop: "-4px" }}
-                  onChange={handleHoursPerDay}
-                  value={hoursPerDay}
-                />
-                時間使用(円/月に反映)
-              </Box>
-              <Table sx={{ width: "auto", margin: "auto" }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>リージョン</TableCell>
-                    <TableCell>価格(USD/時)</TableCell>
-                    <TableCell>価格(円/時)</TableCell>
-                    <TableCell>価格(円/月=30.5日)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {selected.locations.map((location) => (
-                    <TableRow key={location.name}>
-                      <TableCell>{location.name}</TableCell>
-                      <TableCell>{location.price}</TableCell>
-                      <TableCell>
-                        {Math.round(location.price * rate * 100) / 100}
-                      </TableCell>
-                      <TableCell>
-                        {Math.round(
-                          location.price * rate * 100 * 30.5 * hoursPerDay
-                        ) / 100}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Paper>
-          )}
-        </Box>
+                <TableCell>{instance.name}</TableCell>
+                <TableCell>{instance.vcpu}</TableCell>
+                <TableCell>{instance.memory}</TableCell>
+                <TableCell sx={{ fontSize: "0.7rem" }}>
+                  {instance.family}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Box>
-    </>
+      <Box component="main" sx={{ gridArea: "main" }}>
+        {selected && (
+          <Paper sx={{ padding: "1rem" }} elevation={3}>
+            <Typography
+              component="h2"
+              variant="h5"
+              fontWeight="bold"
+              sx={{ textAlign: "center" }}
+            >
+              {selected.name}
+            </Typography>
+            <Table sx={{ width: "auto", margin: "auto" }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>vCPU(GB)</TableCell>
+                  <TableCell>メモリ(GB)</TableCell>
+                  <TableCell>タイプ</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{selected.vcpu}</TableCell>
+                  <TableCell>{selected.memory}</TableCell>
+                  <TableCell>{selected.family}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <Box sx={{ textAlign: "center", margin: "1rem" }}>
+              一日当たり
+              <TextField
+                variant="standard"
+                sx={{ width: "1.2rem", marginTop: "-4px" }}
+                onChange={handleHoursPerDay}
+                value={hoursPerDay}
+              />
+              時間使用(円/月に反映)
+            </Box>
+            <Table sx={{ width: "auto", margin: "auto" }} size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>リージョン</TableCell>
+                  <TableCell>価格(USD/時)</TableCell>
+                  <TableCell>価格(円/時)</TableCell>
+                  <TableCell>価格(円/月=30.5日)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {selected.locations.map((location) => (
+                  <TableRow key={location.name}>
+                    <TableCell>{location.name}</TableCell>
+                    <TableCell>{location.price}</TableCell>
+                    <TableCell>
+                      {Math.round(location.price * rate * 100) / 100}
+                    </TableCell>
+                    <TableCell>
+                      {Math.round(
+                        location.price * rate * 100 * 30.5 * hoursPerDay
+                      ) / 100}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Paper>
+        )}
+      </Box>
+    </Layout>
   );
 };
 
@@ -237,16 +209,26 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const ratings = await (
     await fetch("https://dotnsf-fx.herokuapp.com/")
   ).json();
-  const instances = await (
-    await fetch(`${process.env.APP_URL}/instance.json`)
+  const instances: Instance[] = await (
+    await fetch(`${process.env.APP_URL}/ec2.json`)
   ).json();
+  const sortedInstances = instances
+    .sort((a, b) => a.vcpu - b.vcpu)
+    .sort((a, b) => a.memory - b.memory)
+    .sort((a, b) => (a.name.split(".")[0] < b.name.split(".")[0] ? -1 : 1))
+    .map((instance) => {
+      return {
+        ...instance,
+        locations: instance.locations.sort((a, b) => a.price - b.price),
+      };
+    });
   return {
     props: {
-      instances,
+      instances: sortedInstances,
       rating_updated_at: ratings.datetime.split(" ")[0],
       rate: ratings.rate.USDJPY,
     },
-    revalidate: 24 * 3600,
+    revalidate: 1800,
   };
 };
 
