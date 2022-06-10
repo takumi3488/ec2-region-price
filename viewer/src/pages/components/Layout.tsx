@@ -1,5 +1,5 @@
 import { Box } from "@mui/system";
-import { Children, FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode } from "react";
 import Head from "next/head";
 import Header from "./Header";
 
@@ -18,7 +18,7 @@ const Layout: FC<Props> = (props) => {
         display: "grid",
         gridTemplate: `"header header" auto
                        "aside  main  " auto
-                      / 2fr    3fr   `,
+                      / 1fr    3fr   `,
         gridGap: "1rem",
       }}
     >
