@@ -37,3 +37,6 @@ yarn-error.log*
 # mongo
 db/
 configdb/
+
+# python
+__pycache__
