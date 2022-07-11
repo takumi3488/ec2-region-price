@@ -12,8 +12,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "./components/Layout";
 import NumberInput from "./components/NumberInput";
 
