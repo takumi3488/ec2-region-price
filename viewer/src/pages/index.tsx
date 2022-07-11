@@ -2,6 +2,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  NativeSelect,
   Paper,
   Radio,
   RadioGroup,
@@ -47,6 +48,16 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
     setSearch(e.target.value);
   };
 
+  // ロケーション
+  const [location, setLocation] = useState("全て");
+  const locations = Array.from(
+    new Set(
+      instances
+        .map((instance) => instance.locations.map((location) => location.name))
+        .flat()
+    )
+  ) as string[];
+
   // フィルター済みインスタンス一覧
   const [filteredInstances, setFilteredInstances] =
     useState<Instance[]>(instances);
@@ -58,11 +69,15 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
     const newInstances = instances.filter((instance) => {
       return (
         (selectedFamily === "すべて" || instance.family === selectedFamily) &&
-        (search === "" || instance.name.includes(search))
+        (search === "" || instance.name.includes(search)) &&
+        (location === "全て" ||
+          instance.locations
+            .map((location) => location.name)
+            .includes(location))
       );
     });
     setFilteredInstances(newInstances);
-  }, [instances, selectedFamily, search]);
+  }, [instances, selectedFamily, search, location]);
 
   const [hoursPerDay, setHoursPerDay] = useState<number>(24);
   const handleHoursPerDay = (
@@ -70,10 +85,11 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
   ) => {
     setHoursPerDay(+e.target.value);
   };
+
   return (
     <Layout rate={rate} rating_updated_at={rating_updated_at}>
       <Box component="aside" sx={{ gridArea: "aside" }}>
-        <Box component="span" sx={{ display: "flex" }}>
+        <Box component="span" sx={{ display: "flex", marginBottom: "1rem" }}>
           <TextField
             variant="standard"
             sx={{ marginBottom: "1.5rem" }}
@@ -101,6 +117,26 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
             ))}
           </RadioGroup>
         </FormControl>
+        <Box
+          component="span"
+          sx={{
+            display: "flex",
+            margin: "1rem auto",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography>リージョンを選択</Typography>
+          <NativeSelect
+            defaultValue={"全て"}
+            onChange={(e) => setLocation(e.target.value)}
+          >
+            <option value="全て">全て</option>
+            {locations.map((location) => (
+              <option value={location}>{location}</option>
+            ))}
+          </NativeSelect>
+        </Box>
         <Table sx={{ "& th,td": { padding: "0.3rem" } }}>
           <TableHead>
             <TableRow>
