@@ -32,7 +32,12 @@ type Location = {
   name: string;
   price: number;
 };
-const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
+const Home: NextPage<Props> = ({
+  instances,
+  rating_updated_at,
+  rate,
+  locations,
+}) => {
   const [selected, setSelected] = useState<Instance>(instances[0]);
 
   // インスタンスタイプ
@@ -52,13 +57,6 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
 
   // ロケーション
   const [location, setLocation] = useState("全て");
-  const locations = Array.from(
-    new Set(
-      instances
-        .map((instance) => instance.locations.map((location) => location.name))
-        .flat()
-    )
-  ) as string[];
 
   // オススメインスタンス
   const [checked, setChecked] = useState(false);
@@ -172,7 +170,9 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
           >
             <option value="全て">全て</option>
             {locations.map((location) => (
-              <option value={location} key={location}>{location}</option>
+              <option value={location} key={location}>
+                {location}
+              </option>
             ))}
           </NativeSelect>
         </Box>
@@ -286,6 +286,7 @@ type Props = {
   instances: Instance[];
   rating_updated_at: string;
   rate: number;
+  locations: string[];
 };
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const extractNum = (instance: Instance): number => {
@@ -310,11 +311,19 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         locations: instance.locations.sort((a, b) => a.price - b.price),
       };
     });
+  const locations = Array.from(
+    new Set(
+      instances
+        .map((instance) => instance.locations.map((location) => location.name))
+        .flat()
+    )
+  ) as string[];
   return {
     props: {
       instances: sortedInstances,
       rating_updated_at: ratings.datetime.split(" ")[0],
       rate: ratings.rate.USDJPY,
+      locations: locations.sort((a, b) => (a < b ? -1 : 1)),
     },
     revalidate: 1800,
   };
