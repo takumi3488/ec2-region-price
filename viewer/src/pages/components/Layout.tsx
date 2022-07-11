@@ -18,7 +18,7 @@ const Layout: FC<Props> = (props) => {
         display: "grid",
         gridTemplate: `"header header" auto
                        "aside  main  " auto
-                      / 1fr    3fr   `,
+                      / 2fr    3fr   `,
         gridGap: "1rem",
       }}
     >

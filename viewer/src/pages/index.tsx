@@ -73,13 +73,13 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
   return (
     <Layout rate={rate} rating_updated_at={rating_updated_at}>
       <Box component="aside" sx={{ gridArea: "aside" }}>
-        <Box component="span" sx={{display: "flex"}}>
-        <TextField
-          variant="standard"
-          sx={{ marginBottom: "1.5rem" }}
-          onChange={handleSearch}
-        />
-        <Typography>から始まる</Typography>
+        <Box component="span" sx={{ display: "flex" }}>
+          <TextField
+            variant="standard"
+            sx={{ marginBottom: "1.5rem" }}
+            onChange={handleSearch}
+          />
+          <Typography>から始まる</Typography>
         </Box>
         <FormControl>
           <FormLabel>インスタンスタイプ</FormLabel>
@@ -108,6 +108,7 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
               <TableCell>vCPU(GB)</TableCell>
               <TableCell>メモリ(GB)</TableCell>
               <TableCell>タイプ</TableCell>
+              <TableCell>最安料金($/h)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -124,6 +125,12 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
                 <TableCell>{instance.memory}</TableCell>
                 <TableCell sx={{ fontSize: "0.7rem" }}>
                   {instance.family}
+                </TableCell>
+                <TableCell>
+                  {
+                    instance.locations.sort((a, b) => a.price - b.price)[0]
+                      .price
+                  }
                 </TableCell>
               </TableRow>
             ))}
