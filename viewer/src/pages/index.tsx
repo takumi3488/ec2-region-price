@@ -260,7 +260,7 @@ const Home: NextPage<Props> = ({
               </TableHead>
               <TableBody>
                 {selected.locations
-                  .filter((loc) => loc.name === location)
+                  .filter((loc) => loc.name === location || location === "全て")
                   .map((location) => (
                     <TableRow key={location.name}>
                       <TableCell>{location.name}</TableCell>
