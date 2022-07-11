@@ -249,6 +249,11 @@ type Props = {
   rate: number;
 };
 export const getStaticProps: GetStaticProps<Props> = async () => {
+  const extractNum = (instance: Instance): number => {
+    const pre = instance.name.split(".")[0];
+    const num = pre.match(/\d/);
+    return num ? +num[0] : 0;
+  };
   const ratings = await (
     await fetch("https://dotnsf-fx.herokuapp.com/")
   ).json();
@@ -259,6 +264,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     .sort((a, b) => a.vcpu - b.vcpu)
     .sort((a, b) => a.memory - b.memory)
     .sort((a, b) => (a.name.split(".")[0] < b.name.split(".")[0] ? -1 : 1))
+    .sort((a, b) => extractNum(b) - extractNum(a))
     .map((instance) => {
       return {
         ...instance,
