@@ -259,20 +259,22 @@ const Home: NextPage<Props> = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {selected.locations.map((location) => (
-                  <TableRow key={location.name}>
-                    <TableCell>{location.name}</TableCell>
-                    <TableCell>{location.price}</TableCell>
-                    <TableCell>
-                      {Math.round(location.price * rate * 100) / 100}
-                    </TableCell>
-                    <TableCell>
-                      {Math.round(
-                        location.price * rate * 100 * 30.5 * hoursPerDay
-                      ) / 100}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {selected.locations
+                  .filter((loc) => loc.name === location)
+                  .map((location) => (
+                    <TableRow key={location.name}>
+                      <TableCell>{location.name}</TableCell>
+                      <TableCell>{location.price}</TableCell>
+                      <TableCell>
+                        {Math.round(location.price * rate * 100) / 100}
+                      </TableCell>
+                      <TableCell>
+                        {Math.round(
+                          location.price * rate * 100 * 30.5 * hoursPerDay
+                        ) / 100}
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </Paper>
