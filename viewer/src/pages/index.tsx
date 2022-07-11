@@ -1,6 +1,8 @@
 import {
+  Checkbox,
   FormControl,
   FormControlLabel,
+  FormGroup,
   FormLabel,
   NativeSelect,
   Paper,
@@ -58,6 +60,9 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
     )
   ) as string[];
 
+  // オススメインスタンス
+  const [checked, setChecked] = useState(false);
+
   // フィルター済みインスタンス一覧
   const [filteredInstances, setFilteredInstances] =
     useState<Instance[]>(instances);
@@ -73,11 +78,32 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
         (location === "全て" ||
           instance.locations
             .map((location) => location.name)
-            .includes(location))
+            .includes(location)) &&
+        (!checked ||
+          [
+            "t4g",
+            "t3",
+            "t3a",
+            "m6g",
+            "m6i",
+            "m6a",
+            "c7g",
+            "c6i",
+            "c6a",
+            "r6g",
+            "r6i",
+            "p4d",
+            "dl1",
+            "inf1",
+            "g5",
+            "g5g",
+          ]
+            .map((name) => `${name}.`)
+            .some((name) => instance.name.startsWith(name)))
       );
     });
     setFilteredInstances(newInstances);
-  }, [instances, selectedFamily, search, location]);
+  }, [instances, selectedFamily, search, location, checked]);
 
   const [hoursPerDay, setHoursPerDay] = useState<number>(24);
   const handleHoursPerDay = (
@@ -89,6 +115,19 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
   return (
     <Layout rate={rate} rating_updated_at={rating_updated_at}>
       <Box component="aside" sx={{ gridArea: "aside" }}>
+        <Box sx={{ display: "flex", marginBottom: "1rem" }}>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checked}
+                  onChange={(e) => setChecked(e.target.checked)}
+                />
+              }
+              label="人気のインスタンスのみ表示"
+            />
+          </FormGroup>
+        </Box>
         <Box component="span" sx={{ display: "flex", marginBottom: "1rem" }}>
           <TextField
             variant="standard"
