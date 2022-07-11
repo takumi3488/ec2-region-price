@@ -172,7 +172,7 @@ const Home: NextPage<Props> = ({ instances, rating_updated_at, rate }) => {
           >
             <option value="全て">全て</option>
             {locations.map((location) => (
-              <option value={location}>{location}</option>
+              <option value={location} key={location}>{location}</option>
             ))}
           </NativeSelect>
         </Box>

@@ -33,7 +33,7 @@ const Lambda: NextPage<Props> = ({ archs, rating_updated_at, rate }) => {
     if (arch) {
       setRegions(arch.regions);
     }
-  }, [selected]);
+  }, [selected, archs]);
 
   const [seconds, setSeconds] = useState<number>(300);
   const [memory, setMemory] = useState<number>(512);
