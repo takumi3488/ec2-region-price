@@ -90,6 +90,7 @@ const Home: NextPage<Props> = ({
             "c6a",
             "r6g",
             "r6i",
+            "r7i",
             "p4d",
             "dl1",
             "inf1",
